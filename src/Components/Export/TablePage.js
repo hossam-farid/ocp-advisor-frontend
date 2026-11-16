@@ -1,14 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-  Table,
-  TableVariant,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
 import { t_global_background_color_secondary_default } from '@patternfly/react-tokens';
 
 export const TablePage = ({ clusters, styles }) => {
@@ -42,16 +33,22 @@ export const TablePage = ({ clusters, styles }) => {
   ];
 
   const headerBuilder = ({ value, style }) => (
-    <Th style={{ ...style, ...styles.bold }}>{value}</Th>
+    <th
+      scope="col"
+      className="pf-v6-c-table__th"
+      style={{ ...style, ...styles.bold }}
+    >
+      {value}
+    </th>
   );
 
   const rowBuilder = ({ value }) => (
-    <Td
-      noPadding={true}
+    <td
+      className="pf-v6-c-table__td pf-m-no-padding"
       style={{ fontSize: 8, paddingTop: '1px', paddingBottom: '1px' }}
     >
       {value}
-    </Td>
+    </td>
   );
 
   const rows =
@@ -72,40 +69,51 @@ export const TablePage = ({ clusters, styles }) => {
       const hitsByRisk = cluster.hits_by_total_risk || {};
 
       return (
-        <Tr
-          noPadding={true}
+        <tr
           key={cluster.cluster_id || cluster.cluster_name}
+          className="pf-v6-c-table__tr"
           style={isOddRow ? customStyle : {}}
         >
-          <Td style={{ fontSize: 8 }} noPadding={true}>
+          <td
+            className="pf-v6-c-table__td pf-m-no-padding"
+            style={{ fontSize: 8 }}
+          >
             <a
               style={styles.link}
               href={`/openshift/insights/advisor/clusters/${cluster.cluster_id}`}
             >
               {cluster.cluster_name || cluster.display_name}
             </a>
-          </Td>
+          </td>
           {rowBuilder({ value: cluster.cluster_version || 'N/A' })}
           {rowBuilder({ value: cluster.total_hit_count || 0 })}
           {rowBuilder({ value: hitsByRisk['4'] || 0 })}
           {rowBuilder({ value: hitsByRisk['3'] || 0 })}
           {rowBuilder({ value: hitsByRisk['2'] || 0 })}
           {rowBuilder({ value: hitsByRisk['1'] || 0 })}
-          <Td style={{ fontSize: 8 }} noPadding={true}>
+          <td
+            className="pf-v6-c-table__td pf-m-no-padding"
+            style={{ fontSize: 8 }}
+          >
             {clusterDate}
-          </Td>
-        </Tr>
+          </td>
+        </tr>
       );
     }) || [];
 
+  // Plain elements with PatternFly's class names: a PDF is never interactive,
+  // so it keeps the styling without the hooks PatternFly runs for every cell.
   return (
-    <Table
+    <table
       aria-label={'export-table'}
-      ouiaId={'export-table'}
-      variant={TableVariant.compact}
+      role="grid"
+      className="pf-v6-c-table pf-m-grid-md pf-m-compact"
+      data-ouia-component-type="PF6/Table"
+      data-ouia-safe="true"
+      data-ouia-component-id="export-table"
     >
-      <Thead>
-        <Tr>
+      <thead className="pf-v6-c-table__thead">
+        <tr className="pf-v6-c-table__tr">
           {header.map((colHeader, idx) =>
             headerBuilder({
               value: colHeader.value,
@@ -113,10 +121,12 @@ export const TablePage = ({ clusters, styles }) => {
               key: idx,
             }),
           )}
-        </Tr>
-      </Thead>
-      <Tbody>{rows}</Tbody>
-    </Table>
+        </tr>
+      </thead>
+      <tbody role="rowgroup" className="pf-v6-c-table__tbody">
+        {rows}
+      </tbody>
+    </table>
   );
 };
 
