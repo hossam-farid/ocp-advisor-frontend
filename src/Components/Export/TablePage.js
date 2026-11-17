@@ -42,10 +42,14 @@ export const TablePage = ({ clusters, styles }) => {
     </th>
   );
 
+  // PatternFly positions every table cell, and Chrome prints each positioned box as
+  // its own layer. Body cells are unpositioned here, so a row prints as one piece.
+  const cellStyle = { fontSize: 8, position: 'static' };
+
   const rowBuilder = ({ value }) => (
     <td
       className="pf-v6-c-table__td pf-m-no-padding"
-      style={{ fontSize: 8, paddingTop: '1px', paddingBottom: '1px' }}
+      style={{ ...cellStyle, paddingTop: '1px', paddingBottom: '1px' }}
     >
       {value}
     </td>
@@ -74,10 +78,7 @@ export const TablePage = ({ clusters, styles }) => {
           className="pf-v6-c-table__tr"
           style={isOddRow ? customStyle : {}}
         >
-          <td
-            className="pf-v6-c-table__td pf-m-no-padding"
-            style={{ fontSize: 8 }}
-          >
+          <td className="pf-v6-c-table__td pf-m-no-padding" style={cellStyle}>
             <a
               style={styles.link}
               href={`/openshift/insights/advisor/clusters/${cluster.cluster_id}`}
@@ -91,10 +92,7 @@ export const TablePage = ({ clusters, styles }) => {
           {rowBuilder({ value: hitsByRisk['3'] || 0 })}
           {rowBuilder({ value: hitsByRisk['2'] || 0 })}
           {rowBuilder({ value: hitsByRisk['1'] || 0 })}
-          <td
-            className="pf-v6-c-table__td pf-m-no-padding"
-            style={{ fontSize: 8 }}
-          >
+          <td className="pf-v6-c-table__td pf-m-no-padding" style={cellStyle}>
             {clusterDate}
           </td>
         </tr>
